@@ -336,6 +336,115 @@ class BigANNDataset(BillionScaleDatasetCompetitionFormat):
     def distance(self):
         return "euclidean"
 
+class BigANNClustered100M(DatasetCompetitionFormat):
+    def __init__(self):
+        self.nb_M = 100
+        self.nb = 10**6 * self.nb_M
+        self.d = 128
+        self.nq = 10000
+        self.dtype = "uint8"
+        self.ds_fn = "bigann-100M-clustered.u8bin"
+        self.qs_fn = "query.public.10K.u8bin"
+        self.gt_fn = (
+            "GT.public.1B.ibin" if self.nb_M == 1000 else
+            subset_url + "GT_100M/bigann-100M" if self.nb_M == 100 else
+            subset_url + "GT_10M/bigann-10M" if self.nb_M == 10 else
+            None
+        )
+        # self.gt_fn = "https://comp21storage.z5.web.core.windows.net/comp21/bigann/public_query_gt100.bin" if self.nb == 10**9 else None
+        self.base_url = "https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/bigann/"
+        self.basedir = os.path.join(BASEDIR, "bigann-clustered")
+
+        self.private_nq = 10000
+        self.private_qs_url = ""#https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/bigann/query.private.799253207.10K.u8bin"
+        self.private_gt_url = ""#https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/GT_1B_final_2bf4748c7817/bigann-1B.bin"
+
+
+    def distance(self):
+        return "euclidean"
+
+class BigANNRandom100M(DatasetCompetitionFormat):
+    def __init__(self):
+        self.nb_M = 100
+        self.nb = 10**6 * self.nb_M
+        self.d = 128
+        self.nq = 10000
+        self.dtype = "uint8"
+        self.ds_fn = "bigann-100M-random.u8bin"
+        self.qs_fn = "query.public.10K.u8bin"
+        self.gt_fn = (
+            "GT.public.1B.ibin" if self.nb_M == 1000 else
+            subset_url + "GT_100M/bigann-100M" if self.nb_M == 100 else
+            subset_url + "GT_10M/bigann-10M" if self.nb_M == 10 else
+            None
+        )
+        # self.gt_fn = "https://comp21storage.z5.web.core.windows.net/comp21/bigann/public_query_gt100.bin" if self.nb == 10**9 else None
+        self.base_url = "https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/bigann/"
+        self.basedir = os.path.join(BASEDIR, "bigann-random")
+
+        self.private_nq = 10000
+        self.private_qs_url = ""#https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/bigann/query.private.799253207.10K.u8bin"
+        self.private_gt_url = ""#https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/GT_1B_final_2bf4748c7817/bigann-1B.bin"
+
+
+    def distance(self):
+        return "euclidean"
+
+class BigANNShift100M(DatasetCompetitionFormat):
+    def __init__(self):
+        self.nb_M = 100
+        self.nb = 10**6 * self.nb_M
+        self.d = 128
+        self.nq = 10000
+        self.dtype = "uint8"
+        self.ds_fn = "100M-bigann-shift.u8bin"
+        self.qs_fn = "query.public.10K.u8bin"
+        self.gt_fn = (
+            "GT.public.1B.ibin" if self.nb_M == 1000 else
+            subset_url + "GT_100M/bigann-100M" if self.nb_M == 100 else
+            subset_url + "GT_10M/bigann-10M" if self.nb_M == 10 else
+            None
+        )
+        # self.gt_fn = "https://comp21storage.z5.web.core.windows.net/comp21/bigann/public_query_gt100.bin" if self.nb == 10**9 else None
+        self.base_url = "https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/bigann/"
+        self.basedir = os.path.join(BASEDIR, "bigann-shift")
+
+        self.private_nq = 10000
+        self.private_qs_url = ""#https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/bigann/query.private.799253207.10K.u8bin"
+        self.private_gt_url = ""#https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/GT_1B_final_2bf4748c7817/bigann-1B.bin"
+
+
+    def distance(self):
+        return "euclidean"
+
+class BigANNClustered500M(DatasetCompetitionFormat):
+    def __init__(self):
+        self.nb_M = 500
+        self.nb = 10**6 * self.nb_M
+        self.d = 128
+        self.nq = 10000
+        self.dtype = "uint8"
+        self.ds_fn = "500M-bigann64clustered.u8bin"
+        self.qs_fn = "query.public.10K.u8bin"
+        self.gt_fn = (
+            "GT.public.1B.ibin" if self.nb_M == 1000 else
+            subset_url + "GT_500M/bigann-500M" if self.nb_M == 500 else
+            subset_url + "GT_100M/bigann-100M" if self.nb_M == 100 else
+            subset_url + "GT_10M/bigann-10M" if self.nb_M == 10 else
+            None
+        )
+        # self.gt_fn = "https://comp21storage.z5.web.core.windows.net/comp21/bigann/public_query_gt100.bin" if self.nb == 10**9 else None
+        self.base_url = "https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/bigann/"
+        self.basedir = os.path.join(BASEDIR, "bigann-500M-clustered")
+
+        self.private_nq = 10000
+        self.private_qs_url = ""#https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/bigann/query.private.799253207.10K.u8bin"
+        self.private_gt_url = ""#https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/GT_1B_final_2bf4748c7817/bigann-1B.bin"
+
+
+    def distance(self):
+        return "euclidean"
+
 class Deep1BDataset(BillionScaleDatasetCompetitionFormat):
     def __init__(self, nb_M=1000):
         self.nb_M = nb_M
@@ -451,7 +560,7 @@ class MSTuringClustered10M(DatasetCompetitionFormat):
     
     def prepare(self, skip_data=False, original_size=10 ** 9):
         return super().prepare(skip_data, original_size = self.nb)
-    
+
 class MSTuringClustered30M(DatasetCompetitionFormat):
     def __init__(self):
         self.nb = 29998994
@@ -464,6 +573,71 @@ class MSTuringClustered30M(DatasetCompetitionFormat):
         
         self.base_url = "https://comp21storage.z5.web.core.windows.net/comp23/clustered_data/msturing-30M-clustered/"
         self.basedir = os.path.join(BASEDIR, "MSTuring-30M-clustered")
+
+        self.private_gt_url = None
+        self.private_qs_url = None
+
+    def distance(self):
+        return "euclidean"
+    
+    def prepare(self, skip_data=False, original_size=10 ** 9):
+        return super().prepare(skip_data, original_size = self.nb)
+
+class MSTuringShift100M(DatasetCompetitionFormat):
+    def __init__(self):
+        self.nb = 100000000
+        self.d = 100
+        self.nq = 10000
+        self.dtype = "float32"
+        self.ds_fn = "100M-msturing-shift.fbin"
+        self.qs_fn = "testQuery10K.fbin"
+        self.gt_fn = "clu_msturing100M_gt100"
+        self.base_url = "https://comp21storage.z5.web.core.windows.net/comp23/clustered_data/msturing-100M-shift/"
+        self.basedir = os.path.join(BASEDIR, "MSTuring-100M-shift")
+
+        self.private_gt_url = None
+        self.private_qs_url = None
+
+    def distance(self):
+        return "euclidean"
+    
+    def prepare(self, skip_data=False, original_size=10 ** 9):
+        return super().prepare(skip_data, original_size = self.nb)
+
+class MSTuringClustered100M(DatasetCompetitionFormat):
+    def __init__(self):
+        self.nb = 100000000
+        self.d = 100
+        self.nq = 10000
+        self.dtype = "float32"
+        self.ds_fn = "100M-msturing-clustered.fbin"
+        self.qs_fn = "testQuery10K.fbin"
+        self.gt_fn = "clu_msturing100M_gt100"
+        
+        self.base_url = "https://comp21storage.z5.web.core.windows.net/comp23/clustered_data/msturing-100M-clustered/"
+        self.basedir = os.path.join(BASEDIR, "MSTuring-100M-clustered")
+
+        self.private_gt_url = None
+        self.private_qs_url = None
+
+    def distance(self):
+        return "euclidean"
+    
+    def prepare(self, skip_data=False, original_size=10 ** 9):
+        return super().prepare(skip_data, original_size = self.nb)
+
+class MSTuringRandom100M(DatasetCompetitionFormat):
+    def __init__(self):
+        self.nb = 100000000
+        self.d = 100
+        self.nq = 10000
+        self.dtype = "float32"
+        self.ds_fn = "msturing-100M-random.fbin"
+        self.qs_fn = "testQuery10K.fbin"
+        self.gt_fn = "rand_msturing100M_gt100"
+        
+        self.base_url = "https://comp21storage.z5.web.core.windows.net/comp23/clustered_data/msturing-100M-random/"
+        self.basedir = os.path.join(BASEDIR, "MSTuring-100M-random")
 
         self.private_gt_url = None
         self.private_qs_url = None
@@ -1320,6 +1494,12 @@ DATASETS = {
     'bigann-1B': lambda : BigANNDataset(1000),
     'bigann-100M': lambda : BigANNDataset(100),
     'bigann-10M': lambda : BigANNDataset(10),
+    'bigann-500M': lambda : BigANNDataset(500),
+
+    'bigann-100M-clustered': lambda : BigANNClustered100M(),
+    'bigann-100M-random': lambda : BigANNRandom100M(),
+    'bigann-100M-shift': lambda : BigANNShift100M(),
+    'bigann-500M-clustered': lambda : BigANNClustered500M(),
 
     'deep-1B': lambda : Deep1BDataset(),
     'deep-100M': lambda : Deep1BDataset(100),
@@ -1339,9 +1519,13 @@ DATASETS = {
     'msturing-100M': lambda : MSTuringANNS(100),
     'msturing-10M': lambda : MSTuringANNS(10),
     'msturing-1M': lambda : MSTuringANNS(1),
+    'msturing-500M': lambda : MSTuringANNS(500),
 
     'msturing-10M-clustered': lambda: MSTuringClustered10M(),
     'msturing-30M-clustered': lambda: MSTuringClustered30M(),
+    'msturing-100M-clustered': lambda: MSTuringClustered100M(),
+    'msturing-100M-random': lambda: MSTuringRandom100M(),
+    'msturing-100M-shift': lambda: MSTuringShift100M(),
 
     'msspacev-1B': lambda : MSSPACEV1B(1000),
     'msspacev-100M': lambda : MSSPACEV1B(100),

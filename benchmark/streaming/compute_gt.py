@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 import numpy as np
 
 import sys
@@ -37,6 +38,69 @@ def get_next_set(tag_to_id: np.ndarray, entry):
 def gt_dir(ds, runbook_path):
     runbook_filename = os.path.split(runbook_path)[1]
     return os.path.join(ds.basedir, str(ds.nb), runbook_filename)
+
+
+def get_num_queries(ds):
+    """
+    Get the number of queries from the dataset query file.
+    Assumes binary format with 4-byte int header for number of queries.
+    """
+    query_file = os.path.join(ds.basedir, ds.qs_fn)
+    if not os.path.exists(query_file):
+        return None
+    
+    try:
+        with open(query_file, 'rb') as f:
+            nq = int.from_bytes(f.read(4), byteorder='little')
+        return nq
+    except Exception as e:
+        print(f"Warning: Could not read query file to get number of queries: {e}")
+        return None
+
+def validate_gt_file(gt_file, num_queries, k=100):
+    """
+    Validate that a ground truth file exists and has the expected size.
+    Expected format:
+    - num_queries (uint32_t) - 4 bytes
+    - K (uint32) - 4 bytes
+    - num_queries * K * sizeof(uint32_t) bytes - IDs of K-nearest neighbors
+    - num_queries * K * sizeof(float) bytes - distances to K-nearest neighbors
+    
+    Returns True if valid, False if missing or corrupted.
+    """
+    if not os.path.exists(gt_file):
+        return False
+    
+    # Expected size: 4 (num_queries) + 4 (K) + num_queries * K * 4 (IDs) + num_queries * K * 4 (distances)
+    expected_size = 8 + num_queries * k * 8
+    actual_size = os.path.getsize(gt_file)
+    
+    if actual_size != expected_size:
+        return False
+    
+    return True
+
+def find_resume_step(ds, runbook_path):
+    """
+    Find the highest completed runbook step by scanning existing step*.gt100 files.
+    Returns 0 when no completed step is found.
+    """
+    output_dir = gt_dir(ds, runbook_path)
+    if not os.path.isdir(output_dir):
+        return 0
+
+    step_re = re.compile(r"^step(\d+)\.gt100$")
+    max_step = 0
+
+    for filename in os.listdir(output_dir):
+        match = step_re.match(filename)
+        if not match:
+            continue
+        step = int(match.group(1))
+        if step > max_step:
+            max_step = step
+
+    return max_step
 
 def output_gt(ds, tag_to_id, step, gt_cmdline, runbook_path):
     ids_list = []
@@ -126,11 +190,21 @@ def main():
         case 'int8':
             common_cmd += 'int8'
         case 'uint8':
-            commond_cmd += 'uint8'
+            common_cmd += 'uint8'
         case _:
             raise RuntimeError('Invalid datatype')
     common_cmd += ' --K 100'
     common_cmd += ' --query_file ' + os.path.join(ds.basedir, query_file)
+
+    resume_step = find_resume_step(ds, args.runbook_file)
+    if resume_step > 0:
+        print(f"Found existing GT outputs through step {resume_step}. Will check each step and fill in any gaps.")
+    else:
+        print("No prior GT outputs found. Starting from step 1.")
+
+    num_queries = get_num_queries(ds)
+    if num_queries is None:
+        print("Warning: Could not determine number of queries. Skipping file validation.")
 
     step = 1
     ids = np.empty(0, dtype=np.uint32)
@@ -142,7 +216,14 @@ def main():
         else:
             tag_to_id = get_next_set(tag_to_id, entry)
         if (entry['operation'] == 'search'):
-            output_gt(ds, tag_to_id, step, common_cmd, args.runbook_file)
+            gt_file = os.path.join(gt_dir(ds, args.runbook_file), f'step{step}.gt100')
+            is_valid = validate_gt_file(gt_file, num_queries, k=100) if num_queries else os.path.exists(gt_file)
+            if is_valid:
+                print(f"Skipping step {step}, found valid existing {gt_file}")
+            else:
+                if os.path.exists(gt_file):
+                    print(f"Ground truth file for step {step} exists but is incomplete/corrupted. Recomputing.")
+                output_gt(ds, tag_to_id, step, common_cmd, args.runbook_file)
         step += 1
 
 if __name__ == '__main__':
