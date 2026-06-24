@@ -445,6 +445,34 @@ class BigANNClustered500M(DatasetCompetitionFormat):
     def distance(self):
         return "euclidean"
 
+class BigANNShift500M(DatasetCompetitionFormat):
+    def __init__(self):
+        self.nb_M = 500
+        self.nb = 10**6 * self.nb_M
+        self.d = 128
+        self.nq = 10000
+        self.dtype = "uint8"
+        self.ds_fn = "500M_bigann500shift64.u8bin"
+        self.qs_fn = "query.public.10K.u8bin"
+        self.gt_fn = (
+            "GT.public.1B.ibin" if self.nb_M == 1000 else
+            subset_url + "GT_500M/bigann-500M" if self.nb_M == 500 else
+            subset_url + "GT_100M/bigann-100M" if self.nb_M == 100 else
+            subset_url + "GT_10M/bigann-10M" if self.nb_M == 10 else
+            None
+        )
+        # self.gt_fn = "https://comp21storage.z5.web.core.windows.net/comp21/bigann/public_query_gt100.bin" if self.nb == 10**9 else None
+        self.base_url = "https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/bigann/"
+        self.basedir = os.path.join(BASEDIR, "bigann-500M-shift")
+
+        self.private_nq = 10000
+        self.private_qs_url = ""#https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/bigann/query.private.799253207.10K.u8bin"
+        self.private_gt_url = ""#https://dl.fbaipublicfiles.com/billion-scale-ann-benchmarks/GT_1B_final_2bf4748c7817/bigann-1B.bin"
+
+
+    def distance(self):
+        return "euclidean"
+
 class Deep1BDataset(BillionScaleDatasetCompetitionFormat):
     def __init__(self, nb_M=1000):
         self.nb_M = nb_M
@@ -1500,6 +1528,7 @@ DATASETS = {
     'bigann-100M-random': lambda : BigANNRandom100M(),
     'bigann-100M-shift': lambda : BigANNShift100M(),
     'bigann-500M-clustered': lambda : BigANNClustered500M(),
+    'bigann-500M-shift': lambda : BigANNShift500M(),
 
     'deep-1B': lambda : Deep1BDataset(),
     'deep-100M': lambda : Deep1BDataset(100),
