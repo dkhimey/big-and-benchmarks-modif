@@ -417,6 +417,7 @@ class BigANNShift100M(DatasetCompetitionFormat):
     def distance(self):
         return "euclidean"
 
+
 class BigANNClustered500M(DatasetCompetitionFormat):
     def __init__(self):
         self.nb_M = 500
@@ -665,6 +666,28 @@ class MSTuringClustered100M(DatasetCompetitionFormat):
         
         self.base_url = "https://comp21storage.z5.web.core.windows.net/comp23/clustered_data/msturing-100M-clustered/"
         self.basedir = os.path.join(BASEDIR, "MSTuring-100M-clustered")
+
+        self.private_gt_url = None
+        self.private_qs_url = None
+
+    def distance(self):
+        return "euclidean"
+    
+    def prepare(self, skip_data=False, original_size=10 ** 9):
+        return super().prepare(skip_data, original_size = self.nb)
+
+class MSTuringClustered500M(DatasetCompetitionFormat):
+    def __init__(self):
+        self.nb = 500000000
+        self.d = 100
+        self.nq = 10000
+        self.dtype = "float32"
+        self.ds_fn = "500M-msturingclustered64.out"
+        self.qs_fn = "testQuery10K.fbin"
+        self.gt_fn = "clu_msturing100M_gt100"
+        
+        self.base_url = "https://comp21storage.z5.web.core.windows.net/comp23/clustered_data/msturing-500M-clustered/"
+        self.basedir = os.path.join(BASEDIR, "MSTuring-500M-clustered")
 
         self.private_gt_url = None
         self.private_qs_url = None
@@ -1577,6 +1600,7 @@ DATASETS = {
     'msturing-100M-random': lambda: MSTuringRandom100M(),
     'msturing-100M-shift': lambda: MSTuringShift100M(),
     'msturing-500M-shift': lambda: MSTuringShift500M(),
+    'msturing-500M-clustered': lambda: MSTuringClustered500M(),
 
     'msspacev-1B': lambda : MSSPACEV1B(1000),
     'msspacev-100M': lambda : MSSPACEV1B(100),
